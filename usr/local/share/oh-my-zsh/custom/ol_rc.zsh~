@@ -1,0 +1,140 @@
+export ADOTDIR="$HOME/.zsh/bundle"
+
+alias ls='ls --color=auto'
+PS1='[\u@\h \W]\$ '
+
+alias mgrep='grep -rnI'
+alias imgrep='mgrep -i'
+
+function sigrep() { mgrep $1 src/*.c include/*.h }
+function isigrep() { imgrep $1 src/*.c include/*.h }
+function sgrep() { mgrep $1 src/*.c }
+function isgrep() { imgrep $1 src/*.c }
+function exgrep() { mgrep $1 src/src/*.{c,h} }
+function iexgrep() { imgrep $1 src/src/*.{c,h} }
+
+function _log() { tail -f /var/log/$1.log }
+function a_log() { _log httpd/auth }
+
+export EDITOR="vim"
+export http_proxy=
+export GEM_HOME=/home/pavel/gems
+export GEM_PATH=$GEM_HOME:/usr/lib/ruby/gems/2.0.0/
+export PATH=/usr/local/Trolltech/Qt-4.8.3/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/Adobe:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/pavel/gems/bin:$GEM_PATH
+
+source "$HOME/.zsh/antigen/antigen.zsh"
+
+# Load the oh-my-zsh's library.
+antigen-lib
+
+# Bundles from the default repo (robbyrussell's oh-my-zsh).
+antigen-bundle archlinux
+#antigen-bundle autojump
+antigen-bundle dircycle
+antigen-bundle screen
+antigen-bundle git
+antigen-bundle mercurial
+
+# Syntax highlighting bundle.
+antigen-bundle zsh-users/zsh-syntax-highlighting
+
+# Load the theme.
+antigen-theme robbyrussell
+
+# Tell antigen that you're done
+antigen-apply
+
+unpack() {
+	if [ -f $1 ] ; then
+		case $1 in
+            *.tar.bz2)   tar xjf $1 ;;
+            *.tar.gz)    tar xzf $1 ;;
+            *.bz2)       bunzip2 $1 ;;
+            *.rar)       unrar x $1 ;;
+            *.gz)        gunzip $1  ;;
+            *.tar)       tar xf $1  ;;
+            *.tbz2)      tar xjf $1 ;;
+            *.tgz)       tar xzf $1 ;;
+            *.zip)       unzip $1   ;;
+            *.Z)         uncompress $1;;
+            *.7z)        7z x $1    ;;
+            *)           echo "$fg_bold[red]Ошибка:$reset_color Невозможно распаковать '$1'..." ;;
+        esac
+	else
+		echo "$fg_bold[red]Ошибка:$reset_color '$1' - неподдерживаемый тип файла"
+			fi
+}
+
+pack() {
+	if [ $1 ] ; then
+		case $1 in
+            tbz)    tar cjvf $2.tar.bz2 $2      ;;
+            tgz)    tar czvf $2.tar.gz  $2    ;;
+            tar)   tar cpvf $2.tar  $2       ;;
+            bz2) bzip $2 ;;
+            gz)  gzip -c -9 -n $2 > $2.gz ;;
+            zip)    zip -r $2.zip $2   ;;
+            7z)     7z a $2.7z $2    ;;
+            *)      echo "$fg_bold[red]Ошибка:$reset_color '$1' не может быть упакован через pack()" ;;
+       esac
+	else
+		echo "$fg_bold[red]Ошибка:$reset_color '$1' - неподдерживаемый тип файла"
+			fi
+}
+
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:kill:*' force-list always
+zstyle ':completion:*:*:kill:*:processes' list-colors "=(#b) #([0-9]#)*=$color[cyan]=$color[red]"
+zstyle ':completion:*:*:kill:*:processes' command 'ps --forest -A -o pid,user,cmd'
+zstyle ':completion:*:processes-names' command 'ps axho command' 
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*::::' completer _expand _complete _correct _ignored _approximate
+zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX+$#SUFFIX)/3 )) numeric )'
+zstyle ':completion:*:expand:*' tag-order all-expansions
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:options' auto-description '%d'
+zstyle ':completion:*:descriptions' format '> %B%d%b'
+zstyle ':completion:*:messages' format '> %d'
+zstyle ':completion:*:warnings' format '> Ошибка: нет совпадений для: %d'
+zstyle ':completion:*:corrections' format '> %B%d (число ошибок: %e)%b'
+zstyle ':completion:*:correct:*' insert-unambiguous true
+zstyle ':completion:*:correct:*' original true
+zstyle ':completion:*:correct:*' prompt 'исправить на:'
+zstyle ':completion:*' prompt 'Исправить (число ошибок: %e) > '
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|[._-]=** r:|=**' 'l:|=* r:|=*'
+zstyle ':completion:*' match-original both
+zstyle ':completion:*:matches' group 'yes'
+zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
+zstyle ':completion:*:*:(^rm):*:*files' ignored-patterns '*?.o' '*?.c~''*?.old' '*?.pro'
+zstyle ':completion:*:rm:*' ignore-line yes
+zstyle ':completion:*:functions' ignored-patterns '_*'
+zstyle ':completion:*:incremental:*' completer _complete _correct
+zstyle ':completion:*:predict:*' completer _complete
+zstyle ':mime:*' x-browsers firefox rekonq google-chrome konqueror chromium-browser
+zstyle ':mime:*' tty-browsers w3m elinks links lynx
+zstyle -e ':completion:*' hosts 'reply=($myhosts)'
+zstyle ':completion:*' insert-tab true
+zstyle ':completion:*' select-prompt '%SСтрока: %LЭлемент: %M[%p]%s'
+zstyle ':completion:*' list-prompt '%SТекущее положение: %p%s'
+zstyle ':completion:*' sort true
+zstyle ':completion:*' file-sort name
+zstyle ':completion:*' keep-prefix changed
+zstyle ':completion:*:man:*' separate-sections true
+zstyle ':completion:*:history-words' stop yes
+zstyle ':completion:*:history-words' remove-all-dups yes
+zstyle ':completion:*:history-words' list false
+zstyle ':completion:*:history-words' menu yes select
+zstyle ':completion:*' old-menu true
+zstyle ':completion:*' original true
+zstyle ':completion:*' substitute 1
+zstyle ':completion:*' use-compctl true
+zstyle ':completion:*' word true
+zstyle ':completion:*' special-dirs true
+zstyle ':completion:*' squeeze-slashes true
+zstyle ':completion:*:(ssh|scp|ftp):*' hosts $hosts
+zstyle ':completion:*:(ssh|scp|ftp):*' users $users
+zstyle ':completion:*:complete:-command-::commands' ignored-patterns '*\~'
+zstyle ':completion:*:*:*:users' ignored-patterns adm apache bin daemon games gdm halt ident junkbust lp mail mailnull named news nfsnobody nobody nscd ntp operator pcap postgres radvd rpc rpcuser rpm shutdown squid sshd sync uucp vcsa xfs
+

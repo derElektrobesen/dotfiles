@@ -4,16 +4,20 @@ set encoding=utf-8
 set tenc=utf-8
 
 " Число символов для отступа
-set noexpandtab tabstop=8 shiftwidth=8
-"set tabstop=4
-"set shiftwidth=4
-"set expandtab
+set tabstop=8
+set shiftwidth=8
+set noexpandtab
 set smarttab
 set ruler       " Отображение текущей позиции
 set smartindent " Умные отступы
 
+autocmd Filetype yaml setlocal ts=2 sw=2
+
 " Перенос строк
 set wrap
+set linebreak
+set nolist  " list disables linebreak
+set fo+=t
 
 " Автоотступы
 set ai
@@ -27,8 +31,6 @@ set hlsearch
 set incsearch
 set smartcase
 set ignorecase
-set colorcolumn=100
-highlight ColorColumn ctermbg=gray ctermfg=white guibg=#592929
 
 
 " Номера строк
@@ -45,9 +47,11 @@ set dy=lastline
 " Отображение последней команды
 set showcmd
 set mouse=nicr
-set textwidth=130
+set textwidth=100
+set colorcolumn=+1
 set backspace=indent,eol,start
 set laststatus=2 " Отображение имени файла в статусной строке
+let &colorcolumn="100,".join(range(150,999),",")
 
 "execute pathogen#infect()
 syntax on
@@ -124,7 +128,8 @@ execute pathogen#infect()
 set relativenumber
 set shell=/bin/sh
 
-colorscheme my_scheme
+colorscheme desert256
+" $colorscheme my_scheme
 
 autocmd VimEnter * NERDTree
 autocmd VimEnter * wincmd p
@@ -353,6 +358,10 @@ command! PrettyXML call DoPrettyXML()
 
 let g:ctags_path='/usr/bin/ctags'
 let g:ctags_statusline=1
+let g:go_highlight_types=1
+let g:go_highlight_fields=1
+let g:go_highlight_functions=1
+let g:go_highlight_methods=1
 let generate_tags=0
 
 "autocmd CursorHold *
@@ -386,3 +395,5 @@ function! s:_SetTagDisplay()
         let &titlestring='%t%( %M%)%( (%{expand("%:~:.:h")})%)%( %a%)%='.s:title_tag_name
     endif
 endfunction
+
+highlight ColorColumn ctermbg=233 guibg=#464749
